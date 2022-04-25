@@ -8,12 +8,13 @@ from scipy.fftpack import dct
 from scipy.io import wavfile
 from scipy.signal import butter
 from scipy.signal import lfilter
-
+import torch
+from torchaudio.models import ConvTasNet as ctn
 
 class Compressor:
     fs = 44100
     # size of RMS buffer
-    time_constant = 0.1
+    time_constant = 0.01
     # rms buffer
     memory = np.zeros(int(np.floor(fs * time_constant)))
     idx = 0
@@ -105,28 +106,38 @@ def main():
 
     # hard paths for convenience in writing - change for your own data
     data_path = (
-        "F:\\clarity_CEC2_core.v1_0\\clarity_CEC2_data\\clarity_data\\dev\\scenes\\"
+        "/media/williambailey/Elements/clarity_CEC2_core.v1_0/clarity_CEC2_data/clarity_data/dev/scenes/"
     )
     metadata_path = (
-        "F:\\clarity_CEC2_core.v1_0\\clarity_CEC2_data\\clarity_data\\metadata\\"
+        "/media/williambailey/Elements/clarity_CEC2_core.v1_0/clarity_CEC2_data/clarity_data/metadata/"
     )
-
     with open(os.path.join(metadata_path, "scenes.dev.json")) as f:
         scenes = json.load(f)
-
     with open(os.path.join(metadata_path, "scenes_listeners.dev.json")) as f:
         scenes_listeners = json.load(f)
-
     with open(os.path.join(metadata_path, "listeners.json")) as f:
         listener_audiograms = json.load(f)
-
     # set for the scene you want - should be in loop controlled by config
     scene = scenes[200]
-
     fs_mix, mix = wavfile.read(os.path.join(data_path, f'{scene["scene"]}_mix_CH1.wav'))
-
     mix = np.array(mix, dtype="float32") / (0.5 * 2**16)
+    mix*=20
+    signal_l = torch.reshape(torch.tensor(mix[:, 0].transpose()), shape = [1,1,-1])
+    signal_r = torch.reshape(torch.tensor(mix[:, 1].transpose()), shape = [1,1,-1])
 
+    print('trying tasnet')
+    #tasnet = ctn()
+    print('trying left')
+    #tas_out_l = tasnet.forward(signal_l).detach().numpy()
+
+    #tasnet = ctn()
+    print('trying right')
+    #tas_out_r = tasnet.forward(signal_r).detach().numpy()
+    
+    tas_out_l = mix[:, 0]#tas_out_l[0,0,:].transpose()
+    tas_out_r = mix[:, 1]#tas_out_r[0,0,:].transpose()
+
+    print('tasnet worked!')
     fs = 44100
     cfs = np.array([250, 500, 1000, 2000, 3000, 4000, 6000, 8000])
     # octave band corner frequencies - may increase level when summing bands with fc closer than 1 octave
@@ -136,11 +147,9 @@ def main():
 
     filter_coefs = [butter(2, [l, u], btype="bandpass") for l, u in zip(lfs, ufs)]
 
-    filter_output_l = np.array([lfilter(f[0], f[1], mix[:, 0]) for f in filter_coefs])
-    filter_output_r = np.array([lfilter(f[0], f[1], mix[:, 1]) for f in filter_coefs])
-
-    # hearing loss leves are very extreme - tune this value to get good level without massive
-    # signal levels produced by up to 80dB amplification
+    filter_output_l = np.array([lfilter(f[0], f[1], tas_out_l) for f in filter_coefs])
+    filter_output_r = np.array([lfilter(f[0], f[1], tas_out_r) for f in filter_coefs])
+    
     gain = 1
 
     listeners = scenes_listeners[scene["scene"]]
@@ -191,10 +200,12 @@ def main():
             comp_out_l[i, j] = comp_r[i].compression
 
     #plotting for tuning and debugging
+    print("plotting")
     f, a = plt.subplots(8,2)
     for aa, fl, fr, c in zip(a, comp_filter_out_l, filter_output_l, comp_out_l):
-       aa[0].plot(fl)
-       aa[0].plot(c)
+       aa[0].plot(fl[10000:10100])
+       aa[0].plot(c[10000:10100])
+       aa[0].set_ylim([np.min(fl[10000:10100]), np.max(fl[10000:10100])])
        aa[1].plot(fr)
        aa[1].plot(c)
     plt.show()
