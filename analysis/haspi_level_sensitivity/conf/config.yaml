@@ -1,0 +1,9 @@
+---
+hydra:
+  run:
+    dir: .
+
+defaults:
+  - scene_renderer: level_sensitivity
+  - override hydra/launcher: my_submitit_local
+  - _self_

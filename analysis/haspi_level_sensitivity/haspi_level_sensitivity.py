@@ -10,13 +10,18 @@ from matplotlib import pyplot as plt
 
 import hydra
 from omegaconf import DictConfig
-
 from clarity.evaluator.haspi import haspi_v2_be
 
-def main():
-    data_path = 'E:\\clarity_CEC2_core.v1_0\\clarity_CEC2_data\\clarity_data\\dev\\scenes\\'
+def filter_snr(snr, scenes, scene_listeners, audiograms):
+    scenes = [s for s in scenes if np.round(s['SNR'])==snr]
+    scene_listeners = [s for j, s in zip(scene_listeners) if s['scene'] == ]
+    return scenes, scene_listeners, audiograms
+    
 
-    metadata_path = 'E:\\clarity_CEC2_core.v1_0\\clarity_CEC2_data\\clarity_data\\metadata\\'
+def main(cfg):
+    data_path = f"{cfg.level_sensitivity.paths.clarity_data}dev\\scenes\\"
+
+    metadata_path = f"{cfg.level_sensitivity.paths.clarity_data}\\metadata\\"
 
     with open(os.path.join(metadata_path, 'scenes.dev.json')) as f:
         scenes = json.load(f)
@@ -27,6 +32,8 @@ def main():
     with open(os.path.join(metadata_path, 'listeners.json')) as f:
         listener_audiograms = json.load(f)
 
+    scenes, scenes_listeners, listener_audiograms = filter_snr(cfg.level_sensitivity.snr, scenes, scenes_listeners, listener_audiograms)
+
     mix_files = [l for l in os.listdir(data_path) if l.split('_')[1]=='mix']
 
     interferer_files = [l for l in os.listdir(data_path) if l.split('_')[1]=='interferer']
@@ -34,8 +41,11 @@ def main():
     target_files = [l for l in os.listdir(data_path) if l.split('_')[1]=='target' and l.split('_')[2]=='anechoic']
 
     output = {}
+    start = cfg.level_sensitivity.starting_scene
+    
+    end = cfg.level_sensitivity.starting_scene + cfg.level_sensitivity.scenes_to_process
 
-    for scene in tqdm(scenes[0:10]):
+    for scene in tqdm(scenes[start:end]):
         for listener in scenes_listeners[scene['scene']]:
             output[f'{scene["scene"]}_{listener}'] = {}
             for ref_scale in tqdm(np.arange(-24,1,3)):

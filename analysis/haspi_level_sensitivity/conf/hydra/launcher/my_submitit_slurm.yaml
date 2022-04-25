@@ -1,0 +1,12 @@
+---
+defaults:
+  - submitit_slurm
+
+mem_per_cpu: 4GB
+tasks_per_node: 1
+additional_parameters:
+  account: clarity
+  partition: clarity
+  mail-type: ALL
+setup: ['module load Anaconda3/2019.07  libsndfile/1.0.28-GCCcore-9.3.0 FFmpeg/4.2.2-GCCcore-9.3.0', 'source /usr/local/packages/live/eb/Anaconda3/2019.07/etc/profile.d/
+conda.sh', 'conda activate clarity', 'export SLURM_EXPORT_ENV=ALL']

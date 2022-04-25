@@ -1,0 +1,8 @@
+paths:
+  clarity_data: F:\clarity_CEC2_core.v1_0\clarity_CEC2_data\clarity_data\
+  output_data: ./
+
+starting_scene: 0
+n_scenes_to_process: 5
+snr: 0
+level_increment: 2 
