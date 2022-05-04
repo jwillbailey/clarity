@@ -14,7 +14,7 @@ from torchaudio.models import ConvTasNet as ctn
 class Compressor:
     fs = 44100
     # size of RMS buffer
-    time_constant = 0.01
+    time_constant = 0.25
     # rms buffer
     memory = np.zeros(int(np.floor(fs * time_constant)))
     idx = 0
@@ -61,8 +61,10 @@ class Compressor:
         if return_type == "compression":
             return self.compression
 
-    def __init__(self, attack=5, release=20, threshold=0.05, attenuation=0.1):
+    def __init__(self, attack=5, release=20, threshold=0.05, attenuation=0.1, time_constant = .25):
         # todo take init values
+    # rms buffer
+        self.memory = np.zeros(int(np.floor(self.fs * time_constant)))
         self.set_attack(attack)
         self.set_release(release)
         self.threshold = threshold
