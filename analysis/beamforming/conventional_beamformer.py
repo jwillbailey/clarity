@@ -54,35 +54,54 @@ reference_sensor = (N-1)/2
 scan_response_l = np.zeros(50)
 scan_response_r = np.zeros(50)
 
-for j, theta in enumerate(np.arange(-np.pi, np.pi, (2*np.pi)/10)):
+for j, theta in enumerate(np.arange(-np.pi, np.pi, (2*np.pi)/50)):
    
     u = np.cos(theta)
-    d = 0.0076 #0.76cm microphone distance
-    c = 344
+    d = 10
+    c = 1
+    fs = 10
     omega = np.arange(0, 2*np.pi, (2*np.pi)/(L/2))
     k = omega/c
     n = np.arange(-reference_sensor, reference_sensor+1, 1)
     v = np.zeros([N, int(L/2)], dtype = "complex")
     for i, m in enumerate(n):
-        jkmdu = (complex(0,1) * k) * m * d * u
+        jkmdu = np.array([complex(0,1) * kk * m * d * u for kk in k])
         v[i, :] = np.e**(jkmdu)
     w = np.asmatrix(((1/N) * v))
     
-    sig_out_l = beamform(signal, w)
-    scan_response_l[j] = np.sqrt(np.mean(sig_out_l**2))
+    sig_out_l = beamform(signal_l, w)
+    scan_response_l[j] = (np.sum(sig_out_l**2))
     print(scan_response_l)
     sig_out_r = beamform(signal_r, w)
-    scan_response_r[j] = np.sqrt(np.mean(sig_out_r**2))
-    plt.plot(sig_out_l, alpha = 0.05)
-plt.ylim([-5,5])
+    scan_response_r[j] = (np.sum(sig_out_r**2))
+
+plt.plot(scan_response_r, alpha = 0.5)
+#plt.ylim([-1,1])
 plt.show()
+
+u = np.cos(-.5 * np.pi)
+d = 10
+c = 1
+fs = 10
+omega = np.arange(0, 2*np.pi, (2*np.pi)/(L/2))
+k = omega/c
+n = np.arange(-reference_sensor, reference_sensor+1, 1)
+v = np.zeros([N, int(L/2)], dtype = "complex")
+for i, m in enumerate(n):
+    jkmdu = np.array([complex(0,1) * kk * m * d * u for kk in k])
+    v[i, :] = np.e**(jkmdu)
+w = np.asmatrix(((1/N) * v))
+
+sig_out_l = beamform(signal_l, w)
+sig_out_r = beamform(signal_r, w)
 
 f, a = plt.subplots(2,1)
 a[0].plot(sig_out_l)
 a[0].plot(sig_out_r)
-a[1].plot(signal)
+a[1].plot(signal_l)
 a[1].plot(signal_r)
-#a[0].set_ylim([-1,1])
+a[0].set_ylim([-1,1])
+a[1].set_ylim([-1,1])
 plt.show()
 sig_out = np.array([sig_out_l, sig_out_r]).transpose()
 wavfile.write("beamformer_out.wav", fs_fr, sig_out)
