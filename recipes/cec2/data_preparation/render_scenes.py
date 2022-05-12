@@ -10,24 +10,26 @@ logger = logging.getLogger(__name__)
 
 def render_scenes(cfg):
     for dataset in cfg.scene_renderer:
-        logger.info(f"Beginning scene generation for {dataset} set...")
-        with open(cfg.scene_renderer[dataset].metadata.scene_definitions, "r") as f:
-            scenes = json.load(f)
+        logger.info(f'dataset is {dataset}')
+        if dataset=='demo':
+            logger.info(f"Beginning scene generation for {dataset} set...")
+            with open(cfg.scene_renderer[dataset].metadata.scene_definitions, "r") as f:
+                scenes = json.load(f)
 
-        starting_scene = (
-            cfg.scene_renderer[dataset].chunk_size * cfg.render_starting_chunk
-        )
-        n_scenes = (
-            cfg.scene_renderer[dataset].chunk_size * cfg.render_n_chunk_to_process
-        )
-        scenes = scenes[starting_scene : starting_scene + n_scenes]
+            starting_scene = (
+                cfg.scene_renderer[dataset].chunk_size * cfg.render_starting_chunk
+            )
+            n_scenes = (
+                cfg.scene_renderer[dataset].chunk_size * cfg.render_n_chunk_to_process
+            )
+            scenes = scenes[starting_scene : starting_scene + n_scenes]
 
-        scene_renderer = SceneRenderer(
-            cfg.scene_renderer[dataset].paths,
-            cfg.scene_renderer[dataset].metadata,
-            **cfg.render_params,
-        )
-        scene_renderer.render_scenes(scenes)
+            scene_renderer = SceneRenderer(
+                cfg.scene_renderer[dataset].paths,
+                cfg.scene_renderer[dataset].metadata,
+                **cfg.render_params,
+            )
+            scene_renderer.render_scenes(scenes)
 
 
 @hydra.main(config_path=".", config_name="config")

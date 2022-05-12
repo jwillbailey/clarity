@@ -174,6 +174,7 @@ def add_this_target_to_scene(target, scene, pre_samples_range, post_samples_rang
         pre_samples_range (list): parameters for number of samples prior to target onset
         post_samples_range (list): parameters for number of samples to continue player after target offsets
     """
+    
     scene_target = {}
     num_pre_samples = get_num_pre_samples(pre_samples_range)
     num_post_samples = get_num_post_samples(post_samples_range)
@@ -238,7 +239,7 @@ def select_random_interferer(interferers, dataset, required_samples):
     filtered_interferer_group = [
         i
         for i in interferer_group
-        if i["dataset"] == dataset and i["nsamples"] >= required_samples
+        if i["dataset"] == 'dev' and i["nsamples"] >= required_samples
     ]
     try:
         interferer = random.choice(filtered_interferer_group)
@@ -304,10 +305,9 @@ def add_interferer_to_scene_inner(
     available_positions = range(1, n_positions_available + 1)
     positions = random.sample(available_positions, n_interferers)
     positions.sort()
-
     # Make list of empty dicts match the number selected
     scene["interferers"] = [{"position": position} for position in positions]
-
+    
     # Randomly instantiate each interferer in the scene
     for scene_interferer, scene_type in zip(
         scene["interferers"], selected_interferer_types
@@ -554,14 +554,16 @@ class SceneBuilder:
         """
         targets = json.load(open(target_speakers, "r"))
 
-        targets_dataset = [t for t in targets if t["dataset"] == dataset]
+        targets_dataset = [t for t in targets if t["dataset"] == 'dev']
         scenes_dataset = [s for s in self.scenes if s["dataset"] == dataset]
 
         random.shuffle(targets_dataset)
 
         if target_selection == "SEQUENTIAL":
             # Sequential mode: Cycle through targets sequentially
+            
             for scene, target in zip(scenes_dataset, itertools.cycle(targets_dataset)):
+                
                 add_this_target_to_scene(
                     target, scene, pre_samples_range, post_samples_range
                 )
