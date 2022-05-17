@@ -4,5 +4,5 @@ setup(name='clarity',
       version='2.0',
       description='',
       author='',
-      packages=['clarity'],
+      packages=['clarity.clarity'],
 )
