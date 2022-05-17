@@ -1,6 +1,7 @@
 path:
   root: ???
   metadata_dir: ${path.root}/clarity_data/metadata
+  data_dir: ${path.root}/clarity_data/dev
 
 random_seed: 0
 shuffle_rooms: False

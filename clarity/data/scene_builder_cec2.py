@@ -235,7 +235,10 @@ def select_random_interferer(interferers, dataset, required_samples):
     Returns:
         dict: the interferer dict
     """
+    
+    
     interferer_group = random.choice(interferers)
+    
     filtered_interferer_group = [
         i
         for i in interferer_group
@@ -248,6 +251,7 @@ def select_random_interferer(interferers, dataset, required_samples):
             f"No suitable interferer found for dataset {dataset} and required samples"
             f" {required_samples}"
         )
+
     return interferer
 
 
@@ -313,18 +317,21 @@ def add_interferer_to_scene_inner(
         scene["interferers"], selected_interferer_types
     ):
         desired_start_time = random.randint(*start_time_range)
-
+        
         scene_interferer["time_start"] = min(scene["duration"], desired_start_time)
+        
         desired_end_time = scene["duration"] - random.randint(*end_early_time_range)
 
         scene_interferer["time_end"] = max(
             scene_interferer["time_start"], desired_end_time
         )
-
+        
         required_samples = scene_interferer["time_end"] - scene_interferer["time_start"]
+        
         interferer = select_random_interferer(
             interferers[scene_type], dataset, required_samples
         )
+        
         scene_interferer["type"] = scene_type.value
         scene_interferer["name"] = interferer["ID"]
         scene_interferer["offset"] = get_random_interferer_offset(
