@@ -1,6 +1,13 @@
 import gdown
 import os
 
+def get_metadata_demo():
+    metadata_url = 'https://drive.google.com/uc?export=download&id=14KGm2GaRgwlrZvtmMwWTYu7itaRVQV8f'
+    output = 'metadata.tgz'
+
+    gdown.download(metadata_url, output, quiet=False)
+    os.system('tar -xvzf metadata.tgz')
+    os.system('rm metadata.tgz')
 
 def get_targets_demo():
     targets_url = "https://drive.google.com/uc?export=download&id=1uu2Hes1fzqNaZSCiFNhxZM3bE_fAVKsD"
