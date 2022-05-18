@@ -10,8 +10,8 @@ logger = logging.getLogger(__name__)
 
 @hydra.main(config_path=".", config_name="config")
 def main(cfg):
-    data_path = f"{cfg.path.data_dir}\\scenes"
-    metadata_path = f"{cfg.path.metadata_dir}\\"
+    data_path = f"{cfg.path.data_dir}/scenes"
+    metadata_path = f"{cfg.path.metadata_dir}/"
     demo_dataset_path = Path(f'{cfg.path.data_dir}/demo_dataset')
     if demo_dataset_path.exists() == False:
         print('making demo dataset directory')
