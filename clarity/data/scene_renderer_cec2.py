@@ -254,7 +254,7 @@ class SceneRenderer:
 
         flat_hoa_interferers = sum(padded_interferers)
 
-        logger.info(f"{hoa_target.shape}; {flat_hoa_interferers.shape=}")
+        logger.info(f"{hoa_target.shape}; {flat_hoa_interferers.shape}")
 
         th = two_point_rotation(
             scene["listener"]["rotation"],
