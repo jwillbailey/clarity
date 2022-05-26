@@ -217,7 +217,7 @@ def compute_band_rotation(el, rotations, output):
             rotations[el][mm, nn] = u + v + w
 
     starting_index = int(
-        np.sum(np.array([i * 2.0 + 1.0 for i in np.arange(el)], dtype="float32"))
+        np.sum(np.array([float(i) * 2.0 + 1.0 for i in np.arange(el)], dtype="float32"))
     )
 
     output[
