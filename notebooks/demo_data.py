@@ -1,5 +1,6 @@
 import gdown
 import os
+from pathlib import Path
 
 def get_metadata_demo():
     metadata_url = 'https://drive.google.com/uc?export=download&id=14KGm2GaRgwlrZvtmMwWTYu7itaRVQV8f'
@@ -13,7 +14,9 @@ def get_targets_demo():
     targets_url = "https://drive.google.com/uc?export=download&id=1uu2Hes1fzqNaZSCiFNhxZM3bE_fAVKsD"
     output = "targets.tgz"
     gdown.download(targets_url, output, quiet=False)
-    os.system("tar -xzf targets.tgz")
+    if Path("demo").exists()==False:
+        os.system("mkdir demo")
+    os.system("tar -xzf targets.tgz --directory demo/")
     os.system("rm targets.tgz")
 
 
@@ -21,7 +24,9 @@ def get_interferers_demo():
     interferers_url = "https://drive.google.com/uc?export=download&id=1_ssD238Qv-EETzC0hJze7JhLE7bHyqwG"
     output = "interferers.tgz"
     gdown.download(interferers_url, output, quiet=False)
-    os.system("tar -xzf interferers.tgz")
+    if Path("demo").exists()==False:
+        os.system("mkdir demo")
+    os.system("tar -xzf interferers.tgz --directory demo/")
     os.system("rm interferers.tgz")
 
 
@@ -29,7 +34,9 @@ def get_rooms_demo():
     rooms_url = "https://drive.google.com/uc?export=download&id=1FBC8DI4Ru-g3Set0fDzoKmXTqHqNXV8n"
     output = "rooms.tgz"
     gdown.download(rooms_url, output, quiet=False)
-    os.system("tar -xzf rooms.tgz")
+    if Path("demo").exists()==False:
+        os.system("mkdir demo")
+    os.system("tar -xzf rooms.tgz --directory demo/")
     os.system("rm rooms.tgz")
 
 
