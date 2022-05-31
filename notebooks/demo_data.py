@@ -55,3 +55,13 @@ def get_scenes_demo():
         p.mkdir(parents=True, exist_ok=True)
     os.system("tar -xzf scenes.tgz --directory clarity_data/")
     os.system("rm scenes.tgz")
+
+def get_hrirs_demo():
+    scenes_url = "https://drive.google.com/uc?export=download&id=1USrHLFhOE_jdAQcEKqumG3M5dEZVcwSd"
+    output = "hrirs.tgz"
+    gdown.download(scenes_url, output, quiet=False)
+    p = Path("clarity_data/demo")
+    if p.exists()==False:
+        p.mkdir(parents=True, exist_ok=True)
+    os.system("tar -xzf hrirs.tgz --directory clarity_data/demo")
+    os.system("rm hrirs.tgz")
