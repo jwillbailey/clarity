@@ -7,7 +7,7 @@ def get_metadata_demo():
     output = 'metadata.tgz'
 
     gdown.download(metadata_url, output, quiet=False)
-    os.system('tar -xvzf metadata.tgz')
+    os.system('tar -xvzf metadata.tgz --directory clarity_data/')
     os.system('rm metadata.tgz')
 
 def get_targets_demo():
@@ -16,7 +16,7 @@ def get_targets_demo():
     gdown.download(targets_url, output, quiet=False)
     if Path("demo").exists()==False:
         os.system("mkdir demo")
-    os.system("tar -xzf targets.tgz --directory demo/")
+    os.system("tar -xzf targets.tgz --directory clarity_data/demo/")
     os.system("rm targets.tgz")
 
 
@@ -26,7 +26,7 @@ def get_interferers_demo():
     gdown.download(interferers_url, output, quiet=False)
     if Path("demo").exists()==False:
         os.system("mkdir demo")
-    os.system("tar -xzf interferers.tgz --directory demo/")
+    os.system("tar -xzf interferers.tgz --directory clarity_data/demo/")
     os.system("rm interferers.tgz")
 
 
@@ -36,7 +36,7 @@ def get_rooms_demo():
     gdown.download(rooms_url, output, quiet=False)
     if Path("demo").exists()==False:
         os.system("mkdir demo")
-    os.system("tar -xzf rooms.tgz --directory demo/")
+    os.system("tar -xzf rooms.tgz --directory clarity_data/demo/")
     os.system("rm rooms.tgz")
 
 
@@ -44,5 +44,5 @@ def get_scenes_demo():
     scenes_url = "https://drive.google.com/uc?export=download&id=1PB0CfGXhpkYNk8HbE5lTWowm2016x6Hl"
     output = "scenes.tgz"
     gdown.download(scenes_url, output, quiet=False)
-    os.system("tar -xzf scenes.tgz")
+    os.system("tar -xzf scenes.tgz --directory clarity_data/")
     os.system("rm scenes.tgz")
