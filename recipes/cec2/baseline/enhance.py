@@ -34,17 +34,26 @@ def enhance(cfg: DictConfig) -> None:
             audiogram_right = np.array(
                 listener_audiograms[listener]["audiogram_levels_r"]
             )
-
+            
+            # scaling values by average audiogram level
+            # to fit within dynamic range of digital system
+            # assumes electronic amplification after digital processing 
+            # to make up overall level
+            # TODO: put parameter in config.yaml to switch this on and off
+            scaling_left = 10**(.1 * -np.mean(audiogram_left))
+            
+            scaling_right = 10**(.1 * -np.mean(audiogram_right))
+            
             fs, signal = wavfile.read(
                 os.path.join(cfg.path.scenes_folder, f"{scene}_mix_CH1.wav")
             )
             signal = signal / 32768.0
             assert fs == cfg.nalr.fs
             nalr_fir, _ = enhancer.build(audiogram_left, cfs)
-            out_l = enhancer.apply(nalr_fir, signal[:, 0])
+            out_l = enhancer.apply(nalr_fir, signal[:, 0]) * scaling_left
 
             nalr_fir, _ = enhancer.build(audiogram_right, cfs)
-            out_r = enhancer.apply(nalr_fir, signal[:, 1])
+            out_r = enhancer.apply(nalr_fir, signal[:, 1]) * scaling_right
 
             out_l, _, _ = compressor.process(out_l)
             out_r, _, _ = compressor.process(out_r)
