@@ -41,13 +41,19 @@ class Clarity_Audio_Dataset(Dataset):
         interferer_file_path = self.output_interferer_file_list[idx]
 
         fs_mix, mix = wavfile.read(mix_file_path)
+        mix = np.reshape(mix, [2,-1])
+        mix = np.mean(mix, axis = 0)
         fs_target, target = wavfile.read(target_file_path)
+        target = np.reshape(target, [2,-1])
+        target = np.mean(target, axis = 0)
         fs_interferer, interferer = wavfile.read(interferer_file_path)
+        interferer = np.reshape(interferer, [2,-1])
+        interferer = np.sum(interferer, axis = 0)
         sample  = {'name' : self.input_file_list[idx].stem.split("_")[0],
                     'fs' : fs_mix,
-                    'mix' : mix,
-                    'target' : target,
-                    'interferer' : interferer }
+                    'mix' : torch.tensor(mix, dtype=torch.float),
+                    'target' : torch.tensor([target, interferer], dtype=torch.float) 
+                    }
         return sample
 data_path = "E:\\clarity_CEC2_data\\clarity_data\\dev\\scenes"
 train_data = Clarity_Audio_Dataset(data_path)
