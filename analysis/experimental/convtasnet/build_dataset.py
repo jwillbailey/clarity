@@ -55,5 +55,5 @@ class Clarity_Audio_Dataset(Dataset):
                     'target' : torch.tensor([target, interferer], dtype=torch.float) 
                     }
         return sample
-data_path = "E:\\clarity_CEC2_data\\clarity_data\\dev\\scenes"
+data_path = "F:\\clarity_CEC2_data\\clarity_data\\dev\\scenes"
 train_data = Clarity_Audio_Dataset(data_path)
