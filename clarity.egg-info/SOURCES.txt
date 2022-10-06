@@ -1,0 +1,7 @@
+LICENSE
+README.md
+setup.py
+clarity.egg-info/PKG-INFO
+clarity.egg-info/SOURCES.txt
+clarity.egg-info/dependency_links.txt
+clarity.egg-info/top_level.txt
